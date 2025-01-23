@@ -1,4 +1,4 @@
-# NAVDatabase.Amx.LGDisplay
+# NAVDatabase.Amx.LGxxDisplay
 
 <!-- <div align="center">
  <img src="./" alt="logo" width="200" />
@@ -6,7 +6,7 @@
 
 ---
 
-[![CI](https://github.com/Norgate-AV/NAVDatabase.Amx.LGDisplay/actions/workflows/main.yml/badge.svg)](https://github.com/Norgate-AV/NAVDatabase.Amx.LGDisplay/actions/workflows/main.yml)
+[![CI](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/actions/workflows/main.yml/badge.svg)](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/actions/workflows/main.yml)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -20,15 +20,15 @@ Description
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
--   [Team :soccer:](#team-soccer)
--   [Contributors :sparkles:](#contributors-sparkles)
--   [LICENSE :balance_scale:](#license-balance_scale)
+- [Team :soccer:](#team-soccer)
+- [Contributors :sparkles:](#contributors-sparkles)
+- [LICENSE :balance_scale:](#license-balance_scale)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Team :soccer:
 
-This project is maintained by the following person(s) and a bunch of [awesome contributors](https://github.com/Norgate-AV/NAVDatabase.Amx.LGDisplay/graphs/contributors).
+This project is maintained by the following person(s) and a bunch of [awesome contributors](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/graphs/contributors).
 
 <table>
   <tr>
