@@ -131,30 +131,30 @@ DEFINE_MUTUALLY_EXCLUSIVE
 (* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
 (* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
 define_function SendStringRaw(char cString[]) {
-    NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_TO, dvPort, cString))
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_TO, dvPort, cString))
     send_string dvPort,"cString"
 }
 
 define_function SendString(char cString[]) {
-    NAVLog("'Formatting String'")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Formatting String'")
     SendStringRaw("cString,NAV_CR")
 }
 
 define_function AddToQueue(char cString[], integer iPriority) {
     stack_var integer iQueueWasEmpty
-    NAVLog("'Adding to Queue'")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Adding to Queue'")
     iQueueWasEmpty = (!uQueue.iHasItems && !uQueue.iBusy)
     switch (iPriority) {
     case true: {    //Commands have priority over status requests
         select {
         active (uQueue.iCommandHead == max_length_array(cCommandQueue)): {
-            if (uQueue.iCommandTail <> 1) {
+            if (uQueue.iCommandTail != 1) {
             uQueue.iCommandHead = 1
             cCommandQueue[uQueue.iCommandHead] = cString
             uQueue.iHasItems = true
             }
         }
-        active (uQueue.iCommandTail <> (uQueue.iCommandHead + 1)): {
+        active (uQueue.iCommandTail != (uQueue.iCommandHead + 1)): {
             uQueue.iCommandHead++
             cCommandQueue[uQueue.iCommandHead] = cString
             uQueue.iHasItems = true
@@ -164,13 +164,13 @@ define_function AddToQueue(char cString[], integer iPriority) {
     case false: {
         select {
         active (uQueue.iStatusHead == max_length_array(cStatusQueue)): {
-            if (uQueue.iStatusTail <> 1) {
+            if (uQueue.iStatusTail != 1) {
             uQueue.iStatusHead = 1
             cStatusQueue[uQueue.iStatusHead] = cString
             uQueue.iHasItems = true
             }
         }
-        active (uQueue.iStatusTail <> (uQueue.iStatusHead + 1)): {
+        active (uQueue.iStatusTail != (uQueue.iStatusHead + 1)): {
             uQueue.iStatusHead++
             cStatusQueue[uQueue.iStatusHead] = cString
             uQueue.iHasItems = true
@@ -183,11 +183,11 @@ define_function AddToQueue(char cString[], integer iPriority) {
 }
 
 define_function char[NAV_MAX_BUFFER] RemoveFromQueue() {
-    NAVLog("'Removing from Queue'")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Removing from Queue'")
     if (uQueue.iHasItems && !uQueue.iBusy) {
     uQueue.iBusy = true
     select {
-        active (uQueue.iCommandHead <> uQueue.iCommandTail): {
+        active (uQueue.iCommandHead != uQueue.iCommandTail): {
         if (uQueue.iCommandTail == max_length_array(cCommandQueue)) {
             uQueue.iCommandTail = 1
         }else {
@@ -196,7 +196,7 @@ define_function char[NAV_MAX_BUFFER] RemoveFromQueue() {
 
         uQueue.cLastMess = cCommandQueue[uQueue.iCommandTail]
         }
-        active (uQueue.iStatusHead <> uQueue.iStatusTail): {
+        active (uQueue.iStatusHead != uQueue.iStatusTail): {
         if (uQueue.iStatusTail == max_length_array(cStatusQueue)) {
             uQueue.iStatusTail = 1
         }else {
@@ -211,7 +211,7 @@ define_function char[NAV_MAX_BUFFER] RemoveFromQueue() {
         uQueue.iHasItems = false
     }
 
-    NAVLog("'Last Mess: ',uQueue.cLastMess")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Last Mess: ',uQueue.cLastMess")
     return GetMess(uQueue.cLastMess)
     }
 
@@ -227,7 +227,7 @@ define_function integer GetSubscriptionMessID(char cParam[]) {
 }
 
 define_function char[NAV_MAX_BUFFER] GetMess(char cParam[]) {
-    NAVLog("'Got Mess: ',NAVGetStringBetween(cParam,'|','>')")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Got Mess: ',NAVGetStringBetween(cParam,'|','>')")
     return NAVGetStringBetween(cParam,'|','>')
 }
 
@@ -251,7 +251,7 @@ define_function InitializeObjects() {
 }
 
 define_function GoodResponse() {
-    NAVLog("'Good Response'")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Good Response'")
     uQueue.iBusy = false
     NAVTimelineStop(TL_QUEUE_FAILED_RESPONSE)
 
@@ -262,23 +262,23 @@ define_function GoodResponse() {
 
 define_function SendNextQueueItem() {
     stack_var char cTemp[NAV_MAX_BUFFER]
-   NAVLog("'Sending Next'")
+   NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Sending Next'")
     if (uQueue.iResendLast) {
-    NAVLog("'Resending Last'")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Resending Last'")
     uQueue.iResendLast = false
     cTemp = GetMess(uQueue.cLastMess)
     }else {
-    NAVLog("'Requesting from queue'")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Requesting from queue'")
     cTemp= RemoveFromQueue()
     }
 
     if (length_array(cTemp)) {
-    NAVLog("'Requesting to send'")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'Requesting to send'")
     SendString(cTemp)
 
     switch (iCommMode) {
         case COMM_MODE_TWO_WAY: {
-        timeline_create(TL_QUEUE_FAILED_RESPONSE,ltQueueFailedResponse,length_array(ltQueueFailedResponse),TIMELINE_ABSOLUTE,TIMELINE_ONCE)
+        NAVTimelineStart(TL_QUEUE_FAILED_RESPONSE,ltQueueFailedResponse,TIMELINE_ABSOLUTE,TIMELINE_ONCE)
         }
         case COMM_MODE_ONE_WAY: {
         wait 5 GoodResponse()        //Move on if in one way mode
@@ -344,7 +344,7 @@ define_function Process() {
         iStripLength = length_array(cTemp) - find_string(cTemp, "'x'", 1) + 1
 
         cTemp = NAVStripCharsFromRight(cTemp, iStripLength)    //Remove x,CR,LF
-        NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_PARSING_STRING_FROM, dvPort, cTemp))
+        NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_PARSING_STRING_FROM, dvPort, cTemp))
         select {
         active (NAVContains(uQueue.cLastMess,'HEARTBEAT')): {
             iCommunicating = true
@@ -387,7 +387,7 @@ DEFINE_EVENT
 
 data_event[dvPort] {
     online: {
-    if (data.device.number <> 0) {
+    if (data.device.number != 0) {
         send_command data.device,"'SET MODE DATA'"
         send_command data.device,"'SET BAUD 9600,N,8,1 485 DISABLE'"
         send_command data.device,"'B9MOFF'"
@@ -397,13 +397,13 @@ data_event[dvPort] {
     }
 
     if (iCommMode == COMM_MODE_TWO_WAY) {// && data.device.number == 0) {
-        timeline_create(TL_HEARTBEAT,ltHeartbeat,length_array(ltHeartbeat),TIMELINE_ABSOLUTE,TIMELINE_REPEAT)
+        NAVTimelineStart(TL_HEARTBEAT,ltHeartbeat,TIMELINE_ABSOLUTE,TIMELINE_REPEAT)
     }
 
     if (data.device.number == 0) { iIPConnected = true }
     }
     string: {
-    NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_TO, data.device, data.text))
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_STRING_TO, data.device, data.text))
     select {
         active (NAVStartsWith(cRxBuffer,"$FF")): {
         stack_var char cTemp[3]
@@ -438,7 +438,7 @@ data_event[vdvObject] {
         stack_var char cCmdHeader[NAV_MAX_CHARS]
     stack_var char cCmdParam[2][NAV_MAX_CHARS]
 
-    NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
     cCmdHeader = DuetParseCmdHeader(data.text)
     cCmdParam[1] = DuetParseCmdParam(data.text)
     cCmdParam[2] = DuetParseCmdParam(data.text)
@@ -447,7 +447,7 @@ data_event[vdvObject] {
         switch (cCmdParam[1]) {
             case 'IP_ADDRESS': {
             cIPAddress = cCmdParam[2]
-            timeline_create(TL_IP_CHECK,ltIPCheck,length_array(ltIPCheck),timeline_absolute,timeline_repeat)
+            NAVTimelineStart(TL_IP_CHECK,ltIPCheck,timeline_absolute,timeline_repeat)
             }
             case 'COMM_MODE': {
             switch (cCmdParam[2]) {
@@ -458,7 +458,7 @@ data_event[vdvObject] {
                 case 'TWO-WAY': { //Two-Way
                 iCommMode = COMM_MODE_TWO_WAY
                 if (!timeline_active(TL_HEARTBEAT)) {
-                    timeline_create(TL_HEARTBEAT,ltHeartbeat,length_array(ltHeartbeat),TIMELINE_ABSOLUTE,TIMELINE_REPEAT)
+                    NAVTimelineStart(TL_HEARTBEAT,ltHeartbeat,TIMELINE_ABSOLUTE,TIMELINE_REPEAT)
                 }
                 }
             }
@@ -467,7 +467,7 @@ data_event[vdvObject] {
         }
         case 'INIT': {
         //if (data
-        //timeline_create(TL_HEARTBEAT,ltHeartbeat,length_array(ltHeartbeat),TIMELINE_ABSOLUTE,TIMELINE_REPEAT)
+        //NAVTimelineStart(TL_HEARTBEAT,ltHeartbeat,TIMELINE_ABSOLUTE,TIMELINE_REPEAT)
         }
     }
     }
@@ -481,11 +481,11 @@ data_event[vdvCommObjects] {
     stack_var char cCmdHeader[NAV_MAX_CHARS]
     stack_var integer iResponseObjectMessID
 
-    NAVLog(NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, NAVFormatStandardLogMessage(NAV_STANDARD_LOG_MESSAGE_TYPE_COMMAND_FROM, data.device, data.text))
     cCmdHeader = DuetParseCmdHeader(data.text)
     switch (cCmdHeader) {
         case 'COMMAND_MSG': {
-        NAVLog("'LG_ADDING_COMMAND_TO_QUEUE',data.text")
+        NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'LG_ADDING_COMMAND_TO_QUEUE',data.text")
         AddToQueue("cCmdHeader,data.text",true)
         }
         case 'POLL_MSG': {
@@ -505,7 +505,7 @@ data_event[vdvCommObjects] {
         InitializeObjects()
         if (get_last(vdvCommObjects) == length_array(vdvCommObjects)) {
             send_string vdvObject,"'INIT_DONE'"
-            send_string vdvCommObjects,"'START_POLLING<>'"
+            send_string vdvCommObjects,"'START_POLLING!='"
         }
         }
         case 'REGISTER': {
@@ -522,10 +522,10 @@ data_event[vdvCommObjects] {
 }
 
 timeline_event[TL_HEARTBEAT] {
-    NAVLog("'LG_HEARTBEAT_TIMELINE'")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'LG_HEARTBEAT_TIMELINE'")
     if (!uQueue.iHasItems && !uQueue.iBusy && (iCommMode == COMM_MODE_TWO_WAY)) {    //Make sure we are in two-way mode
     AddToQueue("'POLL_MSG<HEARTBEAT|ka 01 FF>'",false)
-    NAVLog("'LG_HEARTBEAT_TIMELINE_CONDITION_MET'")
+    NAVErrorLog(NAV_LOG_LEVEL_DEBUG, "'LG_HEARTBEAT_TIMELINE_CONDITION_MET'")
     }
 }
 
