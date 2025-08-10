@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.0.0](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/compare/v1.1.0...v2.0.0) (2025-08-10)
+
+### ⚠ BREAKING CHANGES
+
+- complete initial simplification
+
+### 🌟 Features
+
+- complete initial simplification ([db3cddd](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/commit/db3cddd88e612c36fa60dd71f1ca4e4cc5aba009))
+
 ## [1.1.0](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/compare/v1.0.0...v1.1.0) (2025-04-02)
 
 ### 🌟 Features
