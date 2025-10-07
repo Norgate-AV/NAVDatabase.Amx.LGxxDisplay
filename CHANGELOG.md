@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.1.0](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/compare/v2.0.0...v2.1.0) (2025-10-07)
+
+### 🌟 Features
+
+- update for NAVFoundation v3+ ([1c4436b](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/commit/1c4436b73d14dd999475d44e64e1363448f1426f))
+
+### 🚀 Performance
+
+- move timeline array to constant ([58045f1](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/commit/58045f17b3b3b9efdb2bb1958120e5a47b2af20b))
+
 ## [2.0.0](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/compare/v1.1.0...v2.0.0) (2025-08-10)
 
 ### ⚠ BREAKING CHANGES
