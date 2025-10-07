@@ -824,6 +824,11 @@ timeline_event[TL_SOCKET_CHECK] {
 }
 
 
+timeline_event[TL_NAV_LOGIC_ENGINE] {
+    NAVLogicEngineDrive(engine, timeline)
+}
+
+
 (***********************************************************)
 (*                     END OF PROGRAM                      *)
 (*        DO NOT PUT ANY CODE BELOW THIS COMMENT           *)
