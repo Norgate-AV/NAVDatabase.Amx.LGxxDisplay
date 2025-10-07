@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.2](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/compare/v2.1.1...v2.1.2) (2025-10-07)
+
+### 🐛 Bug Fixes
+
+- ref correct string array for input feedback ([c4585a5](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/commit/c4585a555553ee605d88ff0a3f2d4fd3994f4315))
+
 ## [2.1.1](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/compare/v2.1.0...v2.1.1) (2025-10-07)
 
 ### 🐛 Bug Fixes
