@@ -59,6 +59,8 @@ DEFINE_CONSTANT
 
 constant long TL_SOCKET_CHECK           = 1
 
+constant long TL_SOCKET_CHECK_INTERVAL[]= { 3000 }
+
 constant integer REQUIRED_POWER_ON      = 1
 constant integer REQUIRED_POWER_OFF     = 2
 
@@ -136,8 +138,6 @@ DEFINE_TYPE
 DEFINE_VARIABLE
 
 volatile _NAVDisplay object
-
-volatile long socketCheck[] = { 3000 }
 
 volatile char id[2] = '01'
 
@@ -444,7 +444,10 @@ define_function NAVModulePropertyEventCallback(_NAVModulePropertyEvent event) {
     switch (event.Name) {
         case NAV_MODULE_PROPERTY_EVENT_IP_ADDRESS: {
             module.Device.SocketConnection.Address = NAVTrimString(event.Args[1])
-            NAVTimelineStart(TL_SOCKET_CHECK, socketCheck, TIMELINE_ABSOLUTE, TIMELINE_REPEAT)
+            NAVTimelineStart(TL_SOCKET_CHECK,
+                                TL_SOCKET_CHECK_INTERVAL,
+                                TIMELINE_ABSOLUTE,
+                                TIMELINE_REPEAT)
         }
         case NAV_MODULE_PROPERTY_EVENT_PORT: {
             module.Device.SocketConnection.Port = atoi(event.Args[1])
