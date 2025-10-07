@@ -137,6 +137,9 @@ DEFINE_TYPE
 (***********************************************************)
 DEFINE_VARIABLE
 
+volatile _NAVModule module
+volatile _NAVLogicEngine engine
+
 volatile _NAVDisplay object
 
 volatile char id[2] = '01'
@@ -166,9 +169,6 @@ DEFINE_MUTUALLY_EXCLUSIVE
 define_function SendString(char payload[]) {
     send_string dvPort, "payload, NAV_CR"
 }
-
-
-
 
 
 define_function GetInitialized() {
@@ -207,7 +207,7 @@ define_function Reset() {
     module.Device.IsInitialized = false
     UpdateFeedback()
 
-    NAVLogicEngineStop()
+    NAVLogicEngineStop(engine)
 }
 
 
@@ -581,6 +581,9 @@ define_function UpdateFeedback() {
 (*                STARTUP CODE GOES BELOW                  *)
 (***********************************************************)
 DEFINE_START {
+    NAVModuleInit(module)
+    NAvLogicEngineInit(engine)
+
     create_buffer dvPort, module.RxBuffer.Data
     module.Device.SocketConnection.Socket = dvPort.PORT
     module.Device.SocketConnection.Port = DEFAULT_IP_PORT
@@ -606,7 +609,7 @@ data_event[dvPort] {
             UpdateFeedback()
         }
 
-        NAVLogicEngineStart()
+        NAVLogicEngineStart(engine)
     }
     string: {
         CommunicationTimeOut(30)
