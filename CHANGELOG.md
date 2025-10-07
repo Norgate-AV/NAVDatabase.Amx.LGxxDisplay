@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.1.1](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/compare/v2.1.0...v2.1.1) (2025-10-07)
+
+### 🐛 Bug Fixes
+
+- include logic engine timeline event ([b069d1f](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/commit/b069d1fb894618c83afebc64707f0345b4b588cc))
+
 ## [2.1.0](https://github.com/Norgate-AV/NAVDatabase.Amx.LGxxDisplay/compare/v2.0.0...v2.1.0) (2025-10-07)
 
 ### 🌟 Features
